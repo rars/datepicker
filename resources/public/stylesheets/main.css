@@ -1,0 +1,56 @@
+body {
+    font-family: 'Open Sans', sans-serif;
+}
+
+.day-header {
+    width: 30px;
+    height: 30px;
+    display: inline-block;
+    border: 1px solid #acacac;
+    border-radius: 5px;
+    text-align: center;
+    margin: 2px;
+}
+
+.date-item {
+    width: 30px;
+    height: 30px;
+    display: inline-block;
+    border: 1px solid #acacac;
+    border-radius: 5px;
+    text-align: center;
+    margin: 2px;
+}
+
+.month-item {
+    width: 95px;
+    height: 30px;
+    display: inline-block;
+    border: 1px solid #acacac;
+    border-radius: 5px;
+    text-align: center;
+    margin: 2px;
+}
+
+.year-item {
+    width: 50px;
+    height: 30px;
+    display: inline-block;
+    border: 1px solid #acacac;
+    border-radius: 5px;
+    text-align: center;
+    margin: 2px;
+}
+
+.selected {
+    background-color: red;
+}
+
+.nav-arrow {
+    height: 30px;
+}
+
+.nav-header {
+    height: 30px;
+    display: inline-block;
+}
