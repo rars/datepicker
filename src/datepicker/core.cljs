@@ -3,7 +3,7 @@
   (:require [reagent.core :as reagent]
             [datepicker.title :refer (header item-list)]
             [datepicker.date :refer (calendar-view-month months-in-year get-month-name)]
-            [cljs.core.async :refer (chan <!)]))
+            [cljs.core.async :refer (chan <! put!)]))
 
 (def EVENTCHANNEL (chan))
 
@@ -18,7 +18,10 @@
 
 (def EVENTS
   {:update-active-item (fn [{:keys [active-item]}]
-                         (swap! app-state assoc-in [:active-item] active-item))})
+                         (swap! app-state assoc-in [:active-item] active-item))
+   :update-view-month (fn [{:keys [viewing-month viewing-year]}]
+                        (swap! app-state (fn [state] (assoc-in (assoc-in state [:viewing-year] viewing-year)
+                                                               [:viewing-month] viewing-month))))})
 
 (go
   (while true
@@ -62,17 +65,29 @@
                        "selected date-item" "date-item")}
         (:date date)])]))
                
-(defn month-view [month year]
+(defn month-view [EVENTCHANNEL month year]
   (let [state @app-state
         is-selected-month (and (= (:viewing-month state) month)
                                (= (:viewing-year state) year))]
     [:div {:class "month-view"}
      [:div {}
-      [:button {:class "nav-arrow"}
+      [:button {:class "nav-arrow"
+                :on-click (fn [event] (put! EVENTCHANNEL [:update-view-month {:viewing-month (if (= month 0)
+                                                                                               11
+                                                                                               (- month 1))
+                                                                              :viewing-year (if (= month 0)
+                                                                                              (- year 1)
+                                                                                              year)}]))}
        "<"]
       [:div {:class "nav-header"}
        (get-month-name month)]
-      [:button {:class "nav-arrow"}
+      [:button {:class "nav-arrow"
+                :on-click (fn [event] (put! EVENTCHANNEL [:update-view-month {:viewing-month (if (= month 11)
+                                                                                               0
+                                                                                               (+ month 1))
+                                                                              :viewing-year (if (= month 11)
+                                                                                              (+ year 1)
+                                                                                              year)}]))}
        ">"]]
      (for [day ["Su" "Mo" "Tu" "We" "Th" "Fr" "Sa"]]
        ^{:key day}
@@ -86,7 +101,7 @@
   [:div {:class "container"}
    ; [header (:message @app-state)]
    ; [item-list EVENTCHANNEL (:items @app-state) (:active-item @app-state)]
-   [month-view (:viewing-month @app-state) (:viewing-year @app-state)]
+   [month-view EVENTCHANNEL (:viewing-month @app-state) (:viewing-year @app-state)]
    [year-view (:viewing-year @app-state)]
    [decade-view (:viewing-decade @app-state)]])
 
