@@ -23,7 +23,7 @@
         prev-month-ending-date (num-days-in-prev-month month year)
         prev-ending-days (range (- (+ 1 prev-month-ending-date) starting-day) (+ 1 prev-month-ending-date))
         ending-days (take (- 6 ending-day) (range 1 7))
-        mark-month (fn [month date] {:month month :date date})
+        mark-month (fn [month date] {:year year :month month :date date})
         prev-month (if (== month 0) 11 (- month 1))
         next-month (if (== month 11) 0 (+ month 1))]
     (partition 7 (concat
