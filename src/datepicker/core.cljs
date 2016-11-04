@@ -99,13 +99,13 @@
 (defn decade-view [EVENTCHANNEL year]
   (let [selected-year (:selected-year @app-state)]
     [:div {:class "decade-view"}
-     [:div {}
-      [:button {:class "nav-header"
+     [:div {:class "nav-bar"}
+      [:button {:class "nav-arrow"
                 :on-click (create-click-handler EVENTCHANNEL prev-decade)}
        "<"]
       [:div {:class "nav-header"}
        (str year "-" (+ year 11))]
-      [:button {:class "nav-header"
+      [:button {:class "nav-arrow"
                 :on-click (create-click-handler EVENTCHANNEL next-decade)}
        ">"]]
      (for [years (partition 3 (range year (+ year 12)))]
@@ -122,7 +122,7 @@
         is-selected-year (= (:selected-year state) year)
         selected-month (:selected-month state)]
     [:div {:class "year-view"}
-     [:div {}
+     [:div {:class "nav-bar"}
       [:button {:class "nav-arrow"
                 :on-click (create-click-handler EVENTCHANNEL prev-year)}
        "<"]
@@ -161,7 +161,7 @@
         is-selected-month (and (= (:selected-month state) month)
                                (= (:selected-year state) year))]
     [:div {:class "month-view"}
-     [:div {}
+     [:div {:class "nav-bar"}
       [:button {:class "nav-arrow"
                 :on-click (create-click-handler EVENTCHANNEL prev-month)}
        "<"]

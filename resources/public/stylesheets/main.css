@@ -3,8 +3,8 @@ body {
 }
 
 .day-header {
-    width: 30px;
-    height: 30px;
+    width: 44px;
+    height: 44px;
     display: inline-block;
     border: 1px solid #acacac;
     border-radius: 5px;
@@ -13,44 +13,78 @@ body {
 }
 
 .date-item {
-    width: 30px;
-    height: 30px;
+    width: 44px;
+    height: 44px;
     display: inline-block;
     border: 1px solid #acacac;
     border-radius: 5px;
     text-align: center;
     margin: 2px;
+    cursor: pointer;
+}
+
+.month-row {
+    width: 100%;
+    display: flex;
 }
 
 .month-item {
+    flex: 1;
     width: 95px;
-    height: 30px;
+    height: 44px;
     display: inline-block;
     border: 1px solid #acacac;
     border-radius: 5px;
     text-align: center;
     margin: 2px;
+    cursor: pointer;
+}
+
+.decade-row {
+    width: 100%;
+    display: flex;
 }
 
 .year-item {
-    width: 50px;
-    height: 30px;
+    flex: 1;
+    height: 44px;
     display: inline-block;
     border: 1px solid #acacac;
     border-radius: 5px;
     text-align: center;
     margin: 2px;
+    cursor: pointer;
 }
 
 .selected {
     background-color: red;
 }
 
+.month-view {
+    width: 350px;
+}
+
+.year-view {
+    width: 350px;
+}
+
+.decade-view {
+    width: 350px;
+}
+
+.nav-bar {
+    width: 100%;
+    display: flex;
+}
+
 .nav-arrow {
-    height: 30px;
+    height: 44px;
+    width: 44px;
 }
 
 .nav-header {
-    height: 30px;
+    flex: 1;
+    height: 44px;
     display: inline-block;
+    text-align: center;
 }
