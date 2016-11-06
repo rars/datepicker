@@ -21,14 +21,14 @@
 (defn prev-month [state]
   (let [month (:viewing-month state)
         year (:viewing-year state)
-        next-month (if (== month 0)
+        prev-month (if (== month 0)
                      11
                      (- month 1))
-        next-year (if (== month 0)
+        prev-year (if (== month 0)
                     (- year 1)
                     year)]
-    (assoc-in (assoc-in state [:viewing-year] next-year)
-      [:viewing-month] next-month)))
+    (assoc-in (assoc-in state [:viewing-year] prev-year)
+      [:viewing-month] prev-month)))
 
 (defn next-year [state]
   (let [year (:viewing-year state)]
@@ -58,12 +58,11 @@
     :viewing-year 2016
     :viewing-decade 2010
     :current-view 'month
-    :view-type 'month}))
+    :view-type 'month
+    :is-hidden true}))
 
 (def EVENTS
-  {:update-active-item (fn [{:keys [active-item]}]
-                         (swap! app-state assoc-in [:active-item] active-item))
-   :update-state (fn [{:keys [op]}]
+  {:update-state (fn [{:keys [op]}]
                    (swap! app-state (fn [state] (apply op [state]))))})
 
 (go
@@ -71,14 +70,18 @@
     (let [[event-name event-data] (<! EVENTCHANNEL)]
       ((event-name EVENTS) event-data))))
 
+(defn toggle-visibility [state]
+  (let [visible (:is-visible state)]
+    (assoc-in state [:is-visible] (not visible))))
+
 (defn select-date-handler [date month year]
   (fn [state] 
-    (assoc-in
-     (assoc-in
-      (assoc-in state
-                [:selected-date] date)
-      [:selected-month] month)
-     [:selected-year] year)))
+    (toggle-visibility (assoc-in
+                        (assoc-in
+                         (assoc-in state
+                                   [:selected-date] date)
+                         [:selected-month] month)
+                        [:selected-year] year))))
 
 (defn select-month-handler [month year]
   (fn [state]
@@ -95,6 +98,11 @@
 
 (defn create-click-handler [channel op]
   (fn [event] (put! channel [:update-state {:op op}])))
+
+
+(defn create-visibility-handler [channel]
+  (fn [event]
+    (put! channel [:update-state {:op toggle-visibility}])))
 
 (defn decade-view [EVENTCHANNEL year]
   (let [selected-year (:selected-year @app-state)]
@@ -171,21 +179,46 @@
       [:button {:class "nav-arrow"
                 :on-click (create-click-handler EVENTCHANNEL next-month)}
        ">"]]
-     (for [day ["Su" "Mo" "Tu" "We" "Th" "Fr" "Sa"]]
-       ^{:key day}
-       [:div {:class "day-header"}
-        day])
+     [:div {:class "header-row"}
+      (for [day ["Su" "Mo" "Tu" "We" "Th" "Fr" "Sa"]]
+        ^{:key day}
+        [:div {:class "day-header"}
+         day])]
      (for [row (calendar-view-month month year)]
        ^{:key (apply * (map :date row))}
        [month-view-row row is-selected-month])]))
 
-(defn app []
-  [:div {:class "container"}
-   (let [current-view (:current-view @app-state)]
-     (js/console.log (str "hello" current-view))
+(defn datepicker-input [EVENTCHANNEL]
+  (let [state @app-state]
+    [:div {:class "date-select"}
+     [:input {:class "date-input"
+              :type "text"
+              :value (str (:selected-date state)
+                          "/"
+                          (get-month-name (:selected-month state))
+                          "/"
+                          (:selected-year state))}]
+     [:button {:class "date-select"
+               :on-click (create-visibility-handler EVENTCHANNEL)}
+      "Select"]]))
+
+(defn datepicker-view [EVENTCHANNEL]
+  (let [state @app-state
+        current-view (:current-view state)]
+    [:div {:class "datepicker-view"}
      (case current-view
        month [month-view EVENTCHANNEL (:viewing-month @app-state) (:viewing-year @app-state)]
        year [year-view EVENTCHANNEL (:viewing-year @app-state)]
-       decade [decade-view EVENTCHANNEL (:viewing-decade @app-state)]))])
+       decade [decade-view EVENTCHANNEL (:viewing-decade @app-state)])]))
+  
+(defn datepicker []
+  [:div {:class "container"}
+   (let [state @app-state
+         is-hidden (:is-visible state)]
+     (if is-hidden
+       [datepicker-input EVENTCHANNEL]
+       [:div {:class "datepicker-selector"}
+        [datepicker-input EVENTCHANNEL]
+        [datepicker-view EVENTCHANNEL]]))])
 
-(reagent/render [app] (js/document.querySelector "#cljs-target"))
+(reagent/render [datepicker] (js/document.querySelector "#cljs-target"))

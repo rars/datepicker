@@ -2,23 +2,37 @@ body {
     font-family: 'Open Sans', sans-serif;
 }
 
+.header-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
 .day-header {
     width: 44px;
     height: 44px;
-    display: inline-block;
+    display: flex;
+    justify-content: center;
+    align-items: center;
     border: 1px solid #acacac;
     border-radius: 5px;
-    text-align: center;
     margin: 2px;
+}
+
+.row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
 }
 
 .date-item {
     width: 44px;
     height: 44px;
-    display: inline-block;
+    display: flex;
+    justify-content: center;
+    align-items: center;
     border: 1px solid #acacac;
     border-radius: 5px;
-    text-align: center;
     margin: 2px;
     cursor: pointer;
 }
@@ -26,16 +40,19 @@ body {
 .month-row {
     width: 100%;
     display: flex;
+    justify-content: space-between;
+    align-items: center;
 }
 
 .month-item {
     flex: 1;
     width: 95px;
     height: 44px;
-    display: inline-block;
+    display: flex;
+    justify-content: center;
+    align-items: center;
     border: 1px solid #acacac;
     border-radius: 5px;
-    text-align: center;
     margin: 2px;
     cursor: pointer;
 }
@@ -43,15 +60,18 @@ body {
 .decade-row {
     width: 100%;
     display: flex;
+    justify-content: space-between;
+    align-items: center;
 }
 
 .year-item {
     flex: 1;
     height: 44px;
-    display: inline-block;
+    display: flex;
+    justify-content: center;
+    align-items: center;
     border: 1px solid #acacac;
     border-radius: 5px;
-    text-align: center;
     margin: 2px;
     cursor: pointer;
 }
@@ -85,6 +105,29 @@ body {
 .nav-header {
     flex: 1;
     height: 44px;
-    display: inline-block;
-    text-align: center;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.date-input {
+    height: 44px;
+    font-family: 'Open Sans', sans-serif;
+    font-size: 1.5rem;
+}
+
+.date-select {
+    height: 44px;
+    font-size: 1.5rem;
+}
+
+.datepicker-selector {
+    position: relative;
+}
+
+.datepicker-view {
+    position: absolute;
+    top: 50px;
+    left: 0px;
+    z-index: 100;
 }
