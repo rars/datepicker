@@ -99,30 +99,37 @@
 (defn create-click-handler [channel op]
   (fn [event] (put! channel [:update-state {:op op}])))
 
-
 (defn create-visibility-handler [channel]
   (fn [event]
     (put! channel [:update-state {:op toggle-visibility}])))
 
+(defn create-arrow-attrs [on-click]
+  {:class "button nav-arrow"
+   :type "button"
+   :on-click on-click})
+
+(defn create-header [title on-left-click on-right-click]
+  [:div {:class "nav-bar"}
+   [:button (create-arrow-attrs on-left-click)
+    [:i {:class "fa fa-chevron-left"}]]
+   title
+   [:button (create-arrow-attrs on-right-click)
+    [:i {:class "fa fa-chevron-right"}]]])
+
 (defn decade-view [EVENTCHANNEL year]
   (let [selected-year (:selected-year @app-state)]
     [:div {:class "decade-view"}
-     [:div {:class "nav-bar"}
-      [:button {:class "nav-arrow"
-                :on-click (create-click-handler EVENTCHANNEL prev-decade)}
-       "<"]
-      [:div {:class "nav-header"}
-       (str year "-" (+ year 11))]
-      [:button {:class "nav-arrow"
-                :on-click (create-click-handler EVENTCHANNEL next-decade)}
-       ">"]]
+     (create-header [:div {:class "nav-header"} (str year "-" (+ year 11))]
+                    (create-click-handler EVENTCHANNEL prev-decade)
+                    (create-click-handler EVENTCHANNEL next-decade))
      (for [years (partition 3 (range year (+ year 12)))]
        ^{:key (first years)}
        [:div {:class "decade-row"}
         (for [year years]
           ^{:key year}
-          [:div {:class (if (= selected-year year) "selected year-item" "year-item")
-                 :on-click (create-click-handler EVENTCHANNEL (select-year-handler year))}
+          [:button {:class (if (= selected-year year) "button selected year-item" "button year-item")
+                    :type "button"
+                    :on-click (create-click-handler EVENTCHANNEL (select-year-handler year))}
            year])])]))
 
 (defn year-view [EVENTCHANNEL year]
@@ -130,25 +137,23 @@
         is-selected-year (= (:selected-year state) year)
         selected-month (:selected-month state)]
     [:div {:class "year-view"}
-     [:div {:class "nav-bar"}
-      [:button {:class "nav-arrow"
-                :on-click (create-click-handler EVENTCHANNEL prev-year)}
-       "<"]
-      [:button {:class "nav-header"
+     (create-header
+      [:button {:class "button nav-header"
+                :type "button"
                 :on-click (create-click-handler EVENTCHANNEL (fn [state] (change-view state 'decade)))}
        year]
-      [:button {:class "nav-arrow"
-                :on-click (create-click-handler EVENTCHANNEL next-year)}
-       ">"]]
+      (create-click-handler EVENTCHANNEL prev-year)
+      (create-click-handler EVENTCHANNEL next-year))
      (for [month-row (partition 3 (months-in-year))]
        ^{:key (first month-row)}
        [:div {:class "month-row"}
         (for [month month-row]
           ^{:key month}
-          [:div {:class (if (and is-selected-year
-                                 (= (:id month) selected-month))
-                          "selected month-item" "month-item")
-                 :on-click (create-click-handler EVENTCHANNEL (select-month-handler (:id month) year))}
+          [:button {:class (if (and is-selected-year
+                                    (= (:id month) selected-month))
+                             "button selected month-item" "button month-item")
+                    :type "button"
+                    :on-click (create-click-handler EVENTCHANNEL (select-month-handler (:id month) year))}
            (:name month)])])]))
         
 (defn month-view-row [row is-selected-month]
@@ -157,11 +162,12 @@
     [:div {:class "row"}
      (for [date row]
        ^{:key (:date date)}
-       [:div {:class (if (and is-selected-month
+       [:button {:class (if (and is-selected-month
                               (== (:month date) selected-month)
                               (== (:date date) selected-date))
-                       "selected date-item" "date-item")
-              :on-click (create-click-handler EVENTCHANNEL (select-date-handler (:date date) (:month date) (:year date)))}
+                       "button selected date-item" "button date-item")
+                 :type "button"
+                 :on-click (create-click-handler EVENTCHANNEL (select-date-handler (:date date) (:month date) (:year date)))}
         (:date date)])]))
                
 (defn month-view [EVENTCHANNEL month year]
@@ -169,16 +175,13 @@
         is-selected-month (and (= (:selected-month state) month)
                                (= (:selected-year state) year))]
     [:div {:class "month-view"}
-     [:div {:class "nav-bar"}
-      [:button {:class "nav-arrow"
-                :on-click (create-click-handler EVENTCHANNEL prev-month)}
-       "<"]
-      [:button {:class "nav-header"
+     (create-header
+      [:button {:class "button nav-header"
+                :type "button"
                 :on-click (create-click-handler EVENTCHANNEL (fn [state] (change-view state 'year)))}
        (str (get-month-name month) " " year)]
-      [:button {:class "nav-arrow"
-                :on-click (create-click-handler EVENTCHANNEL next-month)}
-       ">"]]
+      (create-click-handler EVENTCHANNEL prev-month)
+      (create-click-handler EVENTCHANNEL next-month))
      [:div {:class "header-row"}
       (for [day ["Su" "Mo" "Tu" "We" "Th" "Fr" "Sa"]]
         ^{:key day}
@@ -200,7 +203,7 @@
                           (:selected-year state))}]
      [:button {:class "date-select"
                :on-click (create-visibility-handler EVENTCHANNEL)}
-      "Select"]]))
+      [:i {:class "fa fa-calendar"}]]]))
 
 (defn datepicker-view [EVENTCHANNEL]
   (let [state @app-state
