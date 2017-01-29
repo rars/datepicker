@@ -1,8 +1,8 @@
 (defproject datepicker "0.1.0-SNAPSHOT"
-  :description "Datepicker demo in clojure reagent"
-  :url "http://example.com/FIXME"
-  :license {:name "Eclipse Public License"
-            :url "http://www.eclipse.org/legal/epl-v10.html"}
+  :description "Datepicker written in Clojurescript using Reagent."
+  :url "https://github.com/rars/datepicker"
+  :license {:name "MIT"
+            :url "https://opensource.org/licenses/MIT"}
 
   :cljsbuild  {:builds [{:id "dev"
                          :source-paths ["src"]
